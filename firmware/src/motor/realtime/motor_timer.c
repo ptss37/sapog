@@ -208,12 +208,12 @@ void motor_timer_init(void)
 	printf("Motor: Timer resolution: %u nanosec\n", (unsigned)_nanosec_per_tick);
 
 	// Enable IRQ
-	nvicEnableVector(TIMEVT_IRQn,  MOTOR_IRQ_PRIORITY_MASK);
+	nvicEnableVector(TIMEVT_IRQn,  MOTOR_IRQ_PRIORITY_MASK); 
 	nvicEnableVector(TIMSTP_IRQn,  MOTOR_IRQ_PRIORITY_MASK);
 
 	// Start the event timer
-	TIMEVT->ARR = 0xFFFF;
-	TIMEVT->PSC = (uint16_t)(prescaler - 1);
+	TIMEVT->ARR = 0xFFFF; //
+	TIMEVT->PSC = (uint16_t)(prescaler - 1); //
 	TIMEVT->CR1 = TIM_CR1_URS;
 	TIMEVT->SR  = 0;
 	TIMEVT->EGR = TIM_EGR_UG;     // Reload immediately

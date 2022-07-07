@@ -321,27 +321,31 @@ static float update_control_rpm(uint32_t comm_period, float dt)
 
 static float update_control_current_limit(float new_duty_cycle)
 {
-	const bool overcurrent = _state.filtered_input_current_for_limiter > _params.current_limit;
-	const bool braking = _state.dc_actual <= 0.0f || new_duty_cycle <= 0.0f;
+  const bool overcurrent = _state.filtered_input_current_for_limiter > _params.current_limit;
+  const bool braking = _state.dc_actual <= 0.0f || new_duty_cycle <= 0.0f;
 
-	if (overcurrent && !braking) {
-		const float error = _state.filtered_input_current_for_limiter - _params.current_limit;
+  if (overcurrent && !braking)
+  {
+    const float error = _state.filtered_input_current_for_limiter - _params.current_limit;
 
-		const float comp = error * _params.current_limit_p;
-		assert(comp >= 0.0f);
+    const float comp = error * _params.current_limit_p;
+    assert(comp >= 0.0f);
 
-		const float min_dc = _params.dc_min_voltage / _state.input_voltage;
+    const float min_dc = _params.dc_min_voltage / _state.input_voltage;
 
-		new_duty_cycle -= comp * _state.dc_actual;
-		if (new_duty_cycle < min_dc) {
-			new_duty_cycle = min_dc;
-		}
+    new_duty_cycle -= comp * _state.dc_actual;
+    if (new_duty_cycle < min_dc)
+    {
+      new_duty_cycle = min_dc;
+    }
 
-		_state.limit_mask |= MOTOR_LIMIT_CURRENT;
-	} else {
-		_state.limit_mask &= ~MOTOR_LIMIT_CURRENT;
-	}
-	return new_duty_cycle;
+    _state.limit_mask |= MOTOR_LIMIT_CURRENT;
+  }
+  else
+  {
+    _state.limit_mask &= ~MOTOR_LIMIT_CURRENT;
+  }
+  return new_duty_cycle;
 }
 
 static float update_control_dc_slope(float new_duty_cycle, float dt)

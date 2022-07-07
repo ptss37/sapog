@@ -82,12 +82,15 @@ static int init_constants(unsigned frequency, const float pwm_dead_time_ns)
 		return -1;
 	}
 
-	_pwm_top = pwm_steps - 1;
+	_pwm_top = pwm_steps - 1; // ARR 레지스터 값(PWM 주파수로 최대주기 계산해서 ARR에 넣을 값 계산 = 17us)
 	_pwm_half_top = pwm_steps / 2;
 
 	const int effective_steps = pwm_steps / 2;
-	const float true_frequency = PWM_TIMER_FREQUENCY / (float)pwm_steps;
-	const unsigned adc_period_usec = motor_adc_sampling_period_hnsec() / HNSEC_PER_USEC;
+  // PWM freq.로 계산한 주기를 ARR에 적용했을 때, ARR만큼의 클럭으로 계산한 실제 freq.
+  const float true_frequency = PWM_TIMER_FREQUENCY / (float)pwm_steps; 
+	// 1hns = 100ns = 0.1u
+  const unsigned adc_period_usec = motor_adc_sampling_period_hnsec() / HNSEC_PER_USEC; // 1066us
+  
 	printf("Motor: PWM freq: %f; Effective steps: %i; ADC period: %u usec\n",
 		true_frequency, effective_steps, adc_period_usec);
 
